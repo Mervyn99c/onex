@@ -10,7 +10,6 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/superproj/onex/internal/pkg/core"
-	gin2 "github.com/superproj/onex/internal/pkg/middleware/gin"
 	"github.com/superproj/onex/internal/sms/controller/v1/message"
 	"github.com/superproj/onex/internal/sms/controller/v1/template"
 	"github.com/superproj/onex/internal/sms/service"
@@ -37,7 +36,7 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService, accounts map[s
 		templatev1 := v1.Group("/template")
 		{
 
-			templatev1.Use(gin2.Validator())
+			//templatev1.Use(gin2.Validator())
 
 			templatev1.GET("", tl.Get)
 			templatev1.GET("", tl.List)

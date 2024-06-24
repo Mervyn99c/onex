@@ -16,7 +16,6 @@ import (
 
 	"github.com/superproj/onex/internal/pkg/client"
 	"github.com/superproj/onex/internal/pkg/middleware/auth"
-	"github.com/superproj/onex/internal/pkg/middleware/tracing"
 	v1 "github.com/superproj/onex/pkg/api/usercenter/v1"
 	genericoptions "github.com/superproj/onex/pkg/options"
 )
@@ -47,11 +46,11 @@ func NewUserCenter(opts *UserCenterOptions, etcdOpts *genericoptions.EtcdOptions
 	once.Do(func() {
 		fn := func(*UserCenterOptions) (v1.UserCenterClient, error) {
 			cliopts := []grpc.ClientOption{
-				grpc.WithMiddleware(tracing.Client()),
+				grpc.WithMiddleware(trace.Client()),
 				grpc.WithEndpoint(opts.Server),
 				grpc.WithTimeout(opts.Timeout),
 				// for tracing remote ip recording
-				grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
+				grpc.WithOptions(grpcx.WithStatsHandler(&trace.ClientHandler{})),
 			}
 			if client.IsDiscoveryEndpoint(opts.Server) {
 				client, err := newEtcdClient(etcdOpts)

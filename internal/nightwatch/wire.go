@@ -14,7 +14,6 @@ package nightwatch
 import (
 	"github.com/google/wire"
 
-	gwstore "github.com/superproj/onex/internal/gateway/store"
 	"github.com/superproj/onex/internal/pkg/client/store"
 	ucstore "github.com/superproj/onex/internal/usercenter/store"
 	"github.com/superproj/onex/pkg/db"
@@ -24,7 +23,6 @@ func wireStoreClient(*db.MySQLOptions) (store.Interface, error) {
 	wire.Build(
 		db.ProviderSet,
 		store.ProviderSet,
-		gwstore.ProviderSet,
 		ucstore.ProviderSet,
 	)
 

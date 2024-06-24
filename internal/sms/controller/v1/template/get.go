@@ -12,11 +12,20 @@ import (
 	v1 "github.com/superproj/onex/pkg/api/sms/v1"
 )
 
+type validator interface {
+	Validate() error
+}
+
 func (b *TemplateController) Get(c *gin.Context) {
 	var r v1.GetTemplateRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)
 	}
+
+	if err := r.Validate(); err != nil {
+		core.WriteResponse(c, err, nil)
+	}
+
 	template, err := b.svc.GetTemplate(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)

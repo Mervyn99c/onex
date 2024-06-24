@@ -4,7 +4,7 @@
 // this file is https://github.com/superproj/onex.
 //
 
-package gin
+package auth
 
 import (
 	"github.com/gin-gonic/gin"

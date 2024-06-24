@@ -13,7 +13,6 @@
 package nightwatch
 
 import (
-	store2 "github.com/superproj/onex/internal/gateway/store"
 	"github.com/superproj/onex/internal/pkg/client/store"
 	store3 "github.com/superproj/onex/internal/usercenter/store"
 	"github.com/superproj/onex/pkg/db"
@@ -30,8 +29,7 @@ func wireStoreClient(mySQLOptions *db.MySQLOptions) (store.Interface, error) {
 	if err != nil {
 		return nil, err
 	}
-	datastore := store2.NewStore(gormDB)
 	storeDatastore := store3.NewStore(gormDB)
-	datastore2 := store.NewStore(datastore, storeDatastore)
+	datastore2 := store.NewStore(storeDatastore)
 	return datastore2, nil
 }

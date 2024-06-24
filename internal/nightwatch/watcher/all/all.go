@@ -8,6 +8,5 @@ package all
 
 //nolint: golint
 import (
-	_ "github.com/superproj/onex/internal/nightwatch/watcher/clean"
 	_ "github.com/superproj/onex/internal/nightwatch/watcher/secretsclean"
 )

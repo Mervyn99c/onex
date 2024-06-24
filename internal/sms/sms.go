@@ -9,9 +9,13 @@ package sms
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	"github.com/superproj/onex/internal/pkg/client/usercenter"
 	"github.com/superproj/onex/internal/pkg/idempotent"
-	mw "github.com/superproj/onex/internal/pkg/middleware/gin"
+	"github.com/superproj/onex/internal/pkg/middleware/header"
+	"github.com/superproj/onex/internal/pkg/middleware/trace"
+	"github.com/superproj/onex/internal/pkg/middleware/validate"
 	"github.com/superproj/onex/internal/sms/biz"
+	"github.com/superproj/onex/internal/sms/middleware/auth"
 	"github.com/superproj/onex/internal/sms/mq"
 	"github.com/superproj/onex/internal/sms/rule"
 	"github.com/superproj/onex/internal/sms/service"
@@ -34,6 +38,10 @@ type Config struct {
 	KqOptions     *genericoptions.KqOptions
 	Address       string
 	Accounts      map[string]string
+
+	// todo
+	UserCenterOptions *usercenter.UserCenterOptions
+	EtcdOptions       *genericoptions.EtcdOptions
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
@@ -94,9 +102,11 @@ func (c completedConfig) New() (*SmsServer, error) {
 	biz := biz.NewBiz(ds, writer, rds, idt)
 
 	srv := service.NewSmsServerService(biz)
+	impl := usercenter.NewUserCenter(c.UserCenterOptions, c.EtcdOptions)
 
 	// gin.Recovery() 中间件，用来捕获任何 panic，并恢复
-	mws := []gin.HandlerFunc{gin.Recovery(), mw.NoCache, mw.Cors, mw.Secure, mw.TraceID()}
+	mws := []gin.HandlerFunc{gin.Recovery(), header.NoCache, header.Cors, header.Secure,
+		trace.TraceID(), auth.BasicAuth(impl), validate.Validator()}
 
 	// 设置 Gin 模式
 	gin.SetMode(gin.ReleaseMode)
@@ -108,6 +118,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	g.Use(mws...)
 
 	// 并初始化路由
+	// 这里注册不同的路由可以分开，如是否使用人认证中间件，分别在use 认证中间件前后
 	installRouters(g, srv, c.Accounts)
 	// 考虑在这里install consumer
 
