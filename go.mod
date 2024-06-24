@@ -1,5 +1,8 @@
 module github.com/superproj/onex
 
+// todo 修改为smsx
+// 删除冗余的依赖
+
 go 1.22.0
 
 require (

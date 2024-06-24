@@ -11,8 +11,9 @@ grpc方式
 启动etcd的命令是什么  
 biz层带有接口，是参考kratos的，暂不修改  
 night watch修改成不依赖kratos，不使用wire  
-usercenter比较复杂，暂不接入，先使用gin-jwt，参考miniblog，grpc方面参考iam，后续再考虑调用usercenter  
-需要引入一个调用grpc的服务，可考虑使用batch来调用gateway  
+usercenter比较复杂，暂不接入，先使用gin-jwt，参考miniblog，grpc方面参考iam，后续再考虑调用usercenter    
+需要引入一个调用grpc的服务，可考虑使用batch来调用gateway    
+授权用于管理员给其他用户权限，认证用于业务接口   
 
 
 # 需要的目录
@@ -25,4 +26,4 @@ mongodb 分片后续可以使用多机器k8s部署
 
 # 自己写一个usercenter 可以进行rpc调用，
 jwt认证不使用动态秘钥的形式 使用固定的代码配置
-动态秘钥是ParseWithClaims的方式
+动态秘钥是ParseWithClaims的方式 
