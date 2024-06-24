@@ -8,6 +8,8 @@
 package pump
 
 import (
+	flow2 "github.com/superproj/onex/internal/pump/mq/consumer"
+	"github.com/superproj/onex/pkg/streams/flow"
 	"time"
 
 	"github.com/segmentio/kafka-go"
@@ -18,33 +20,35 @@ import (
 	"github.com/superproj/onex/pkg/log"
 	genericoptions "github.com/superproj/onex/pkg/options"
 	kafkaconnector "github.com/superproj/onex/pkg/streams/connector/kafka"
-	mongoconnector "github.com/superproj/onex/pkg/streams/connector/mongo"
-	"github.com/superproj/onex/pkg/streams/flow"
 )
 
 // Config defines the config for the apiserver.
 type Config struct {
 	KafkaOptions *genericoptions.KafkaOptions
 	MongoOptions *genericoptions.MongoOptions
+	// todo redis
 }
 
 // Server contains state for a Kubernetes cluster master/api server.
 type Server struct {
-	config  kafka.ReaderConfig
-	colName string
-	db      *mongo.Database
+	kafkaReader kafka.ReaderConfig
+	colName     string
+	db          *mongo.Database
 }
 
 type completedConfig struct {
 	*Config
 }
 
+// 思路1 函数使用依赖注入redi
+// 思路2 函数修改为方法，但是map方法需要使用适配器兼容方法参数
 // addUTC appends a UTC timestamp to the beginning of the message value.
 var addUTC = func(msg kafka.Message) kafka.Message {
 	timestamp := time.Now().Format(time.DateTime)
 
 	// Concatenate the UTC timestamp with msg.Value
 	msg.Value = []byte(timestamp + " " + string(msg.Value))
+	// 这里拿到值后可以写入MySQL MongoDB，做日志记录 不一定是byte类型的
 	return msg
 }
 
@@ -60,9 +64,9 @@ func (c completedConfig) New() (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	server := &Server{
-		config: kafka.ReaderConfig{
+		// 这里带有默认值的可以不配置
+		kafkaReader: kafka.ReaderConfig{
 			Brokers:           c.KafkaOptions.Brokers,
 			Topic:             c.KafkaOptions.Topic,
 			GroupID:           c.KafkaOptions.ReaderOptions.GroupID,
@@ -79,41 +83,37 @@ func (c completedConfig) New() (*Server, error) {
 		},
 		colName: c.MongoOptions.Collection,
 		db:      client.Database(c.MongoOptions.Database),
+		// todo redis
 	}
 
 	return server, nil
 }
 
-type preparedServer struct {
+type PreparedServer struct {
 	*Server
 }
 
-func (s *Server) PrepareRun() preparedServer {
-	return preparedServer{s}
+func (s *Server) PrepareRun() PreparedServer {
+	return PreparedServer{s}
 }
 
-func (s preparedServer) Run(stopCh <-chan struct{}) error {
+func (s PreparedServer) Run(stopCh <-chan struct{}) error {
+	// 支持多个消费者
+
 	ctx := wait.ContextForChannel(stopCh)
-
-	source, err := kafkaconnector.NewKafkaSource(ctx, s.config)
-	if err != nil {
-		return err
-	}
-
-	filter := flow.NewMap(addUTC, 1)
-
-	sink, err := mongoconnector.NewMongoSink(ctx, s.db, mongoconnector.SinkConfig{
-		CollectionName:            s.colName,
-		CollectionCapMaxDocuments: 2000,
-		CollectionCapMaxSizeBytes: 5 * genericoptions.GiB,
-		CollectionCapEnable:       true,
-	})
-	if err != nil {
-		return err
-	}
+	// todo reader已经提供了默认值
 
 	log.Infof("Successfully start pump server")
-	source.Via(filter).To(sink)
 
-	return nil
+	// todo reader已经提供了默认值
+	source2, err := kafkaconnector.NewKafkaSource(ctx, s.kafkaReader)
+	if err != nil {
+		return err
+	}
+	// todo 这里可以传入整个server，也可以只传入redis store等
+	logic := flow2.NewArticleLikeNumLogic(ctx, s.db)
+	articleConsumer := flow.NewConsumer(logic, 1)
+	// 这里通过map写入通道，通道是由sink初始化后开始消费
+	source2.Via(articleConsumer)
+	return err
 }

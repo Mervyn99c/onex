@@ -67,6 +67,11 @@ func (ks *KafkaSource) consume() {
 			klog.ErrorS(err, "Failed to read message")
 		}
 		ks.out <- msg
+
+		// 提交偏移量  todo 2 是否需要?
+		if err := ks.r.CommitMessages(context.Background(), msg); err != nil {
+			//log.Fatal(err)
+		}
 	}
 }
 

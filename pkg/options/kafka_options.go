@@ -318,15 +318,16 @@ func (o *KafkaOptions) GetMechanism() (sasl.Mechanism, error) {
 }
 
 func (o *KafkaOptions) Dialer() (*kafka.Dialer, error) {
-	tlsConfig, err := o.TLSOptions.TLSConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	mechanism, err := o.GetMechanism()
-	if err != nil {
-		return nil, err
-	}
+	// todo 1
+	//tlsConfig, err := o.TLSOptions.TLSConfig()
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//mechanism, err := o.GetMechanism()
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return &kafka.Dialer{
 		Timeout:       o.Timeout,

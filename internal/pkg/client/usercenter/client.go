@@ -32,6 +32,7 @@ var (
 // Interface is an interface that presents a subset of the usercenter API.
 type Interface interface {
 	Auth(ctx context.Context, token string, obj, act string) (string, bool, error)
+	Authenticate(ctx context.Context, token string) (userID string, err error)
 }
 
 // impl is an implementation of Interface.
@@ -95,4 +96,14 @@ func (i *impl) Auth(ctx context.Context, token string, obj, act string) (userID 
 	}
 
 	return resp.UserID, resp.Allowed, nil
+}
+
+func (i *impl) Authenticate(ctx context.Context, token string) (userID string, err error) {
+	rq := &v1.AuthenticateRequest{Token: token}
+	resp, err := i.client.Authenticate(ctx, rq)
+	if err != nil {
+		return "", err
+	}
+
+	return resp.UserID, nil
 }

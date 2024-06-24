@@ -7,11 +7,8 @@
 package jwt
 
 import (
-	"context"
+	"github.com/gin-gonic/gin"
 	"strings"
-
-	"github.com/go-kratos/kratos/v2/metadata"
-	"github.com/go-kratos/kratos/v2/transport"
 )
 
 const (
@@ -22,17 +19,11 @@ const (
 	authorizationKey string = "Authorization"
 )
 
-func TokenFromServerContext(ctx context.Context) string {
-	if tr, ok := transport.FromServerContext(ctx); ok {
-		auths := strings.SplitN(tr.RequestHeader().Get(authorizationKey), " ", 2)
-		if len(auths) == 2 && strings.EqualFold(auths[0], bearerWord) {
-			return auths[1]
-		}
-	}
+func TokenFromServerContext(c *gin.Context) string {
 
-	if md, ok := metadata.FromServerContext(ctx); ok {
-		return md.Get("x-md-global-jwt")
+	auths := strings.SplitN(c.Request.Header.Get(authorizationKey), " ", 2)
+	if len(auths) == 2 && strings.EqualFold(auths[0], bearerWord) {
+		return auths[1]
 	}
-
 	return ""
 }

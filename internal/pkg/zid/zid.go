@@ -19,6 +19,8 @@ const (
 	User ZID = "user"
 	// ID for the order resource in onex-fakeserver.
 	Order ZID = "order"
+	// ID for the template resource in onex-sms.
+	Template ZID = "template"
 )
 
 func (zid ZID) String() string {
