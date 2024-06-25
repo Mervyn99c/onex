@@ -13,6 +13,7 @@ import (
 	"github.com/Rosas99/smsx/internal/pkg/middleware/trace"
 	"github.com/Rosas99/smsx/internal/sms/biz"
 	"github.com/Rosas99/smsx/internal/sms/middleware/auth"
+	"github.com/Rosas99/smsx/internal/sms/middleware/validate"
 	"github.com/Rosas99/smsx/internal/sms/service"
 	"github.com/Rosas99/smsx/internal/sms/store"
 	"github.com/Rosas99/smsx/internal/sms/store/mysql"
@@ -118,7 +119,9 @@ func (c completedConfig) New() (*SmsServer, error) {
 
 	// gin.Recovery() 中间件，用来捕获任何 panic，并恢复
 	mws := []gin.HandlerFunc{gin.Recovery(), header.NoCache, header.Cors, header.Secure,
-		trace.TraceID(), auth.BasicAuth(impl)}
+		// todo 这里传入rds ds
+		// 注意验证链路的顺序
+		trace.TraceID(), auth.BasicAuth(impl), validate.Validation(ds)}
 	// 添加中间件
 	g.Use(mws...)
 	// Need start grpc server first. http server depends on grpc sever.

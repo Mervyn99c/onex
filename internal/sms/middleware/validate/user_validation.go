@@ -5,6 +5,7 @@
 package validate
 
 import (
+	"github.com/Rosas99/smsx/internal/sms/store"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,7 @@ import (
 // 这样不需要使用自定义的了
 
 // Validation make sure users have the right resource permission and operation.
-func Validation() gin.HandlerFunc {
+func Validation(ds store.IStore) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		switch c.FullPath() {
