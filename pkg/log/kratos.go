@@ -17,7 +17,7 @@ type KratosLogger interface {
 	Log(level krtlog.Level, keyvals ...any) error
 }
 
-func (l *zapLogger) Log(level krtlog.Level, keyvals ...any) error {
+func (l *ZapLogger) Log(level krtlog.Level, keyvals ...any) error {
 	keylen := len(keyvals)
 	if keylen == 0 || keylen%2 != 0 {
 		l.z.Warn(fmt.Sprint("Keyvalues must appear in pairs: ", keyvals))

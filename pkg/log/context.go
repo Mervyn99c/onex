@@ -22,13 +22,13 @@ type contextKey struct{}
 // WithContext returns a copy of context in which the log value is set.
 func WithContext(ctx context.Context, keyvals ...any) context.Context {
 	if l := FromContext(ctx); l != nil {
-		return l.(*zapLogger).WithContext(ctx, keyvals...)
+		return l.(*ZapLogger).WithContext(ctx, keyvals...)
 	}
 
 	return std.WithContext(ctx, keyvals...)
 }
 
-func (l *zapLogger) WithContext(ctx context.Context, keyvals ...any) context.Context {
+func (l *ZapLogger) WithContext(ctx context.Context, keyvals ...any) context.Context {
 	with := func(l Logger) context.Context {
 		return context.WithValue(ctx, contextKey{}, l)
 	}

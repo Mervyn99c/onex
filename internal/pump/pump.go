@@ -8,8 +8,15 @@
 package pump
 
 import (
-	flow2 "github.com/Rosas99/smsx/internal/pump/mq/consumer"
+	"github.com/Rosas99/smsx/internal/pkg/idempotent"
+	flow2 "github.com/Rosas99/smsx/internal/pump/mq"
+	"github.com/Rosas99/smsx/internal/pump/provider"
+	"github.com/Rosas99/smsx/internal/pump/types"
+	"github.com/Rosas99/smsx/internal/sms/store"
+	"github.com/Rosas99/smsx/internal/sms/store/mysql"
+	"github.com/Rosas99/smsx/pkg/db"
 	"github.com/Rosas99/smsx/pkg/streams/flow"
+	"github.com/jinzhu/copier"
 	"time"
 
 	"github.com/segmentio/kafka-go"
@@ -26,7 +33,8 @@ import (
 type Config struct {
 	KafkaOptions *genericoptions.KafkaOptions
 	MongoOptions *genericoptions.MongoOptions
-	// todo redis
+	RedisOptions *genericoptions.RedisOptions
+	MySQLOptions *genericoptions.MySQLOptions
 }
 
 // Server contains state for a Kubernetes cluster master/api server.
@@ -34,6 +42,8 @@ type Server struct {
 	kafkaReader kafka.ReaderConfig
 	colName     string
 	db          *mongo.Database
+	idt         *idempotent.Idempotent
+	logger      *Logger
 }
 
 type completedConfig struct {
@@ -64,6 +74,36 @@ func (c completedConfig) New() (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	var redisOptions db.RedisOptions
+	value := &c.Config.RedisOptions
+	_ = copier.Copy(&redisOptions, value)
+	rds, err := db.NewRedis(&redisOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	//这里初始化所有writer 然后注入biz
+	idt, err := idempotent.NewIdempotent(rds)
+	if err != nil {
+		return nil, err
+	}
+	factory := provider.NewProviderFactory()
+	factory.RegisterProvider(types.ProviderTypeWE, provider.NewWEProvider(rds))
+
+	var dbOptions db.MySQLOptions
+	_ = copier.Copy(&dbOptions, c.MySQLOptions)
+	ins, err := db.NewMySQL(&dbOptions)
+	if err != nil {
+		return nil, err
+	}
+	var ds store.IStore
+	ds = mysql.NewStore(ins)
+	logger, err := NewLogger(ds.Templates())
+	if err != nil {
+		return nil, err
+	}
+
 	server := &Server{
 		// 这里带有默认值的可以不配置
 		kafkaReader: kafka.ReaderConfig{
@@ -84,6 +124,8 @@ func (c completedConfig) New() (*Server, error) {
 		colName: c.MongoOptions.Collection,
 		db:      client.Database(c.MongoOptions.Database),
 		// todo redis
+		idt:    idt,
+		logger: logger,
 	}
 
 	return server, nil
@@ -110,8 +152,9 @@ func (s PreparedServer) Run(stopCh <-chan struct{}) error {
 	if err != nil {
 		return err
 	}
+
 	// todo 这里可以传入整个server，也可以只传入redis store等
-	logic := flow2.NewArticleLikeNumLogic(ctx, s.db)
+	logic := flow2.NewHandlerMessageBiz(ctx, s.db, s.idt, s.logger)
 	articleConsumer := flow.NewConsumer(logic, 1)
 	// 这里通过map写入通道，通道是由sink初始化后开始消费
 	source2.Via(articleConsumer)

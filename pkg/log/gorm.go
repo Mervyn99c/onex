@@ -35,7 +35,7 @@ var levelM = map[string]gormlogger.LogLevel{
 	"info":  gormlogger.Info,
 }
 
-func (l *zapLogger) LogMode(level gormlogger.LogLevel) gormlogger.Interface {
+func (l *ZapLogger) LogMode(level gormlogger.LogLevel) gormlogger.Interface {
 	opts := *l.opts
 	switch {
 	case level <= gormlogger.Silent:
@@ -52,19 +52,19 @@ func (l *zapLogger) LogMode(level gormlogger.LogLevel) gormlogger.Interface {
 	return NewLogger(&opts)
 }
 
-func (l *zapLogger) Info(ctx context.Context, msg string, keyvals ...any) {
+func (l *ZapLogger) Info(ctx context.Context, msg string, keyvals ...any) {
 	l.z.Sugar().Infof(infoStr+msg, append([]any{fileWithLineNum()}, keyvals...)...)
 }
 
-func (l *zapLogger) Warn(ctx context.Context, msg string, keyvals ...any) {
+func (l *ZapLogger) Warn(ctx context.Context, msg string, keyvals ...any) {
 	l.z.Sugar().Warnf(warnStr+msg, append([]any{fileWithLineNum()}, keyvals...)...)
 }
 
-func (l *zapLogger) Error(ctx context.Context, msg string, keyvals ...any) {
+func (l *ZapLogger) Error(ctx context.Context, msg string, keyvals ...any) {
 	l.z.Sugar().Errorf(errStr+msg, append([]any{fileWithLineNum()}, keyvals...)...)
 }
 
-func (l *zapLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
+func (l *ZapLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
 	if levelM[l.opts.Level] <= gormlogger.Silent {
 		return
 	}

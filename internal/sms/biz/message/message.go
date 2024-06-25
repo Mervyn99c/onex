@@ -10,7 +10,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Rosas99/smsx/internal/pkg/idempotent"
-	"github.com/Rosas99/smsx/internal/sms/mq"
+	logger2 "github.com/Rosas99/smsx/internal/sms"
 	"github.com/Rosas99/smsx/internal/sms/rule"
 	"github.com/Rosas99/smsx/internal/sms/store"
 	v1 "github.com/Rosas99/smsx/pkg/api/sms/v1"
@@ -28,7 +28,7 @@ type MessageBiz interface {
 type messageBiz struct {
 	ds store.IStore
 	// todo writer
-	logger *mq.KafkaLogger
+	logger *logger2.Logger
 	rds    *redis.Client
 	rule   *rule.RuleFactory
 	idt    *idempotent.Idempotent
@@ -38,11 +38,16 @@ type messageBiz struct {
 var _ MessageBiz = (*messageBiz)(nil)
 
 // New 创建一个实现了 OrderBiz 接口的实例.
-func New(ds store.IStore, logger *mq.KafkaLogger, rds *redis.Client, idt *idempotent.Idempotent) *messageBiz {
+func New(ds store.IStore, logger *logger2.Logger, rds *redis.Client, idt *idempotent.Idempotent) *messageBiz {
 	return &messageBiz{ds: ds, logger: logger, rds: rds}
 }
 
 type TemplateMsgRequest struct {
+	Matcher   string     `protobuf:"bytes,1,opt,name=matcher,proto3" json:"matcher,omitempty"`
+	Request   []any      `protobuf:"bytes,2,opt,name=request,proto3" json:"request,omitempty"`
+	Result    bool       `protobuf:"bytes,3,opt,name=result,proto3" json:"result,omitempty"`
+	Explains  [][]string `protobuf:"bytes,4,opt,name=explains,proto3" json:"explains,omitempty"`
+	Timestamp int64      `protobuf:"bytes,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	RequestId string
 }
 

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/Rosas99/smsx/internal/pkg/meta"
+	"github.com/Rosas99/smsx/internal/sms"
 	"github.com/Rosas99/smsx/internal/sms/model"
-	"github.com/Rosas99/smsx/internal/sms/mq"
 	"github.com/Rosas99/smsx/internal/sms/store"
 	v1 "github.com/Rosas99/smsx/pkg/api/sms/v1"
 	"github.com/Rosas99/smsx/pkg/log"
@@ -26,11 +26,11 @@ type TemplateBiz interface {
 }
 type templateBiz struct {
 	ds     store.IStore
-	logger *mq.KafkaLogger
+	logger *sms.Logger
 	rds    *redis.Client
 }
 
-func New(ds store.IStore, logger *mq.KafkaLogger, rds *redis.Client) *templateBiz {
+func New(ds store.IStore, logger *sms.Logger, rds *redis.Client) *templateBiz {
 	return &templateBiz{ds: ds, logger: logger, rds: rds}
 }
 

@@ -16,6 +16,7 @@ type CheckerResponse struct {
 	Reason string
 }
 
+// 策略模式
 // todo 参考iam注册方式
 // Rule 接口定义了验证规则需要实现的方法
 type Rule interface {
@@ -40,6 +41,11 @@ func NewRuleFactory() *RuleFactory {
 // RegisterRule 注册 Rule 实现
 func (rf *RuleFactory) RegisterRule(key string, rule Rule) {
 	rf.rules[key] = rule
+}
+
+func init() {
+	factory := NewRuleFactory()
+	factory.RegisterRule("MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY", &MessageCountForTemplateRule{})
 }
 
 func (rf *RuleFactory) CheckRules(template *model.TemplateM, mobile string, cfgList []*model.ConfigurationM) error {

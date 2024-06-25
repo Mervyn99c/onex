@@ -44,14 +44,14 @@ type Logger interface {
 	gormlogger.Interface
 }
 
-// zapLogger 是 Logger 接口的具体实现. 它底层封装了 zap.Logger.
-type zapLogger struct {
+// ZapLogger 是 Logger 接口的具体实现. 它底层封装了 zap.Logger.
+type ZapLogger struct {
 	z    *zap.Logger
 	opts *Options
 }
 
-// 确保 zapLogger 实现了 Logger 接口. 以下变量赋值，可以使错误在编译期被发现.
-var _ Logger = (*zapLogger)(nil)
+// 确保 ZapLogger 实现了 Logger 接口. 以下变量赋值，可以使错误在编译期被发现.
+var _ Logger = (*ZapLogger)(nil)
 
 var (
 	mu sync.Mutex
@@ -69,7 +69,7 @@ func Init(opts *Options) {
 }
 
 // NewLogger 根据传入的 opts 创建 Logger.
-func NewLogger(opts *Options) *zapLogger {
+func NewLogger(opts *Options) *ZapLogger {
 	if opts == nil {
 		opts = NewOptions()
 	}
@@ -123,7 +123,7 @@ func NewLogger(opts *Options) *zapLogger {
 	if err != nil {
 		panic(err)
 	}
-	logger := &zapLogger{z: z, opts: opts}
+	logger := &ZapLogger{z: z, opts: opts}
 
 	// 把标准库的 log.Logger 的 info 级别的输出重定向到 zap.Logger
 	zap.RedirectStdLog(z)
@@ -135,14 +135,14 @@ func Default() Logger {
 	return std
 }
 
-func (l *zapLogger) Options() *Options {
+func (l *ZapLogger) Options() *Options {
 	return l.opts
 }
 
 // Sync 调用底层 zap.Logger 的 Sync 方法，将缓存中的日志刷新到磁盘文件中. 主程序需要在退出前调用 Sync.
 func Sync() { std.Sync() }
 
-func (l *zapLogger) Sync() {
+func (l *ZapLogger) Sync() {
 	_ = l.z.Sync()
 }
 
@@ -151,7 +151,7 @@ func Debugf(format string, args ...any) {
 	std.Debugf(format, args...)
 }
 
-func (l *zapLogger) Debugf(format string, args ...any) {
+func (l *ZapLogger) Debugf(format string, args ...any) {
 	l.z.Sugar().Debugf(format, args...)
 }
 
@@ -160,7 +160,7 @@ func Debugw(msg string, keyvals ...any) {
 	std.Debugw(msg, keyvals...)
 }
 
-func (l *zapLogger) Debugw(msg string, keyvals ...any) {
+func (l *ZapLogger) Debugw(msg string, keyvals ...any) {
 	l.z.Sugar().Debugw(msg, keyvals...)
 }
 
@@ -169,7 +169,7 @@ func Infof(format string, args ...any) {
 	std.Infof(format, args...)
 }
 
-func (l *zapLogger) Infof(msg string, keyvals ...any) {
+func (l *ZapLogger) Infof(msg string, keyvals ...any) {
 	l.z.Sugar().Infof(msg, keyvals...)
 }
 
@@ -178,7 +178,7 @@ func Infow(msg string, keyvals ...any) {
 	std.Infow(msg, keyvals...)
 }
 
-func (l *zapLogger) Infow(msg string, keyvals ...any) {
+func (l *ZapLogger) Infow(msg string, keyvals ...any) {
 	l.z.Sugar().Infow(msg, keyvals...)
 }
 
@@ -187,7 +187,7 @@ func Warnf(format string, args ...any) {
 	std.Warnf(format, args...)
 }
 
-func (l *zapLogger) Warnf(format string, args ...any) {
+func (l *ZapLogger) Warnf(format string, args ...any) {
 	l.z.Sugar().Warnf(format, args...)
 }
 
@@ -196,7 +196,7 @@ func Warnw(msg string, keyvals ...any) {
 	std.Warnw(msg, keyvals...)
 }
 
-func (l *zapLogger) Warnw(msg string, keyvals ...any) {
+func (l *ZapLogger) Warnw(msg string, keyvals ...any) {
 	l.z.Sugar().Warnw(msg, keyvals...)
 }
 
@@ -205,7 +205,7 @@ func Errorf(format string, args ...any) {
 	std.Errorf(format, args...)
 }
 
-func (l *zapLogger) Errorf(format string, args ...any) {
+func (l *ZapLogger) Errorf(format string, args ...any) {
 	l.z.Sugar().Errorf(format, args...)
 }
 
@@ -214,7 +214,7 @@ func Errorw(err error, msg string, keyvals ...any) {
 	std.Errorw(err, msg, keyvals...)
 }
 
-func (l *zapLogger) Errorw(err error, msg string, keyvals ...any) {
+func (l *ZapLogger) Errorw(err error, msg string, keyvals ...any) {
 	l.z.Sugar().Errorw(msg, append(keyvals, "err", err)...)
 }
 
@@ -223,7 +223,7 @@ func Panicf(format string, args ...any) {
 	std.Panicf(format, args...)
 }
 
-func (l *zapLogger) Panicf(format string, args ...any) {
+func (l *ZapLogger) Panicf(format string, args ...any) {
 	l.z.Sugar().Panicf(format, args...)
 }
 
@@ -232,7 +232,7 @@ func Panicw(msg string, keyvals ...any) {
 	std.Panicw(msg, keyvals...)
 }
 
-func (l *zapLogger) Panicw(msg string, keyvals ...any) {
+func (l *ZapLogger) Panicw(msg string, keyvals ...any) {
 	l.z.Sugar().Panicw(msg, keyvals...)
 }
 
@@ -241,7 +241,7 @@ func Fatalf(format string, args ...any) {
 	std.Fatalf(format, args...)
 }
 
-func (l *zapLogger) Fatalf(format string, args ...any) {
+func (l *ZapLogger) Fatalf(format string, args ...any) {
 	l.z.Sugar().Fatalf(format, args...)
 }
 
@@ -250,7 +250,7 @@ func Fatalw(msg string, keyvals ...any) {
 	std.Fatalw(msg, keyvals...)
 }
 
-func (l *zapLogger) Fatalw(msg string, keyvals ...any) {
+func (l *ZapLogger) Fatalw(msg string, keyvals ...any) {
 	l.z.Sugar().Fatalw(msg, keyvals...)
 }
 
@@ -260,7 +260,7 @@ func With(fields ...Field) Logger {
 
 // With creates a child logger and adds structured context to it. Fields added
 // to the child don't affect the parent, and vice versa.
-func (l *zapLogger) With(fields ...Field) Logger {
+func (l *ZapLogger) With(fields ...Field) Logger {
 	if len(fields) == 0 {
 		return l
 	}
@@ -278,14 +278,14 @@ func AddCallerSkip(skip int) Logger {
 // (as enabled by the AddCaller option). When building wrappers around the
 // Logger and SugaredLogger, supplying this Option prevents zap from always
 // reporting the wrapper code as the caller.
-func (l *zapLogger) AddCallerSkip(skip int) Logger {
+func (l *ZapLogger) AddCallerSkip(skip int) Logger {
 	lc := l.clone()
 	lc.z = lc.z.WithOptions(zap.AddCallerSkip(skip))
 	return lc
 }
 
-// clone 深度拷贝 zapLogger.
-func (l *zapLogger) clone() *zapLogger {
+// clone 深度拷贝 ZapLogger.
+func (l *ZapLogger) clone() *ZapLogger {
 	copied := *l
 	return &copied
 }

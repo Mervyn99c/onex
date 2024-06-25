@@ -11,7 +11,7 @@ import (
 	_ "k8s.io/component-base/metrics/prometheus/clientgo" // load all the prometheus client-go plugins
 	_ "k8s.io/component-base/metrics/prometheus/version"  // for version metric registration
 
-	"github.com/Rosas99/smsx/cmd/onex-pump/app"
+	"github.com/Rosas99/smsx/cmd/smsx-pump/app"
 )
 
 func main() {

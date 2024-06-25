@@ -11,7 +11,7 @@ package main
 import (
 	_ "go.uber.org/automaxprocs"
 
-	"github.com/Rosas99/smsx/cmd/onex-sms/app"
+	"github.com/Rosas99/smsx/cmd/smsx-sms/app"
 )
 
 func main() {

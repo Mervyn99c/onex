@@ -13,8 +13,6 @@ import (
 	"github.com/Rosas99/smsx/internal/pkg/middleware/trace"
 	"github.com/Rosas99/smsx/internal/sms/biz"
 	"github.com/Rosas99/smsx/internal/sms/middleware/auth"
-	"github.com/Rosas99/smsx/internal/sms/mq"
-	"github.com/Rosas99/smsx/internal/sms/rule"
 	"github.com/Rosas99/smsx/internal/sms/service"
 	"github.com/Rosas99/smsx/internal/sms/store"
 	"github.com/Rosas99/smsx/internal/sms/store/mysql"
@@ -81,15 +79,10 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	writer, err := mq.NewLogger(c.KafkaOptions1)
+	writer, err := NewLogger(c.KafkaOptions1, ds.Templates())
 	if err != nil {
 		return nil, err
 	}
-	//todo 注册rule
-	factory := rule.NewRuleFactory()
-	// 创建并注册 Rule 实例
-	factory.RegisterRule("MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY", &rule.MessageCountForTemplateRule{})
-	// todo 其他规则
 
 	//这里初始化所有writer 然后注入biz
 	idt, err := idempotent.NewIdempotent(rds)

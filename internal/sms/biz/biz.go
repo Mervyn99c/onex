@@ -10,9 +10,9 @@ package biz
 
 import (
 	"github.com/Rosas99/smsx/internal/pkg/idempotent"
+	"github.com/Rosas99/smsx/internal/sms"
 	"github.com/Rosas99/smsx/internal/sms/biz/message"
 	"github.com/Rosas99/smsx/internal/sms/biz/template"
-	"github.com/Rosas99/smsx/internal/sms/mq"
 	"github.com/Rosas99/smsx/internal/sms/store"
 	"github.com/redis/go-redis/v9"
 )
@@ -26,7 +26,7 @@ type IBiz interface {
 // biz 是 IBiz 的一个具体实现.
 type Biz struct {
 	ds    store.IStore
-	kafka *mq.KafkaLogger
+	kafka *sms.Logger
 	rds   *redis.Client
 	idt   *idempotent.Idempotent
 }
@@ -35,7 +35,7 @@ type Biz struct {
 var _ IBiz = (*Biz)(nil)
 
 // NewBiz 创建一个 IBiz 类型的实例.
-func NewBiz(ds store.IStore, kafka *mq.KafkaLogger, rds *redis.Client, idt *idempotent.Idempotent) *Biz {
+func NewBiz(ds store.IStore, kafka *sms.Logger, rds *redis.Client, idt *idempotent.Idempotent) *Biz {
 	return &Biz{ds: ds, kafka: kafka, rds: rds, idt: idt}
 }
 

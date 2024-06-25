@@ -16,32 +16,34 @@ import (
 
 var (
 	once sync.Once
-	// 全局变量，保存已被初始化的 *datastore 实例.
-	s *datastore
+	// 全局变量，保存已被初始化的 *Datastore 实例.
+	s *Datastore
 )
 
-// datastore 是 IStore 的一个具体实现.
-type datastore struct {
+// Datastore 是 IStore 的一个具体实现.
+type Datastore struct {
 	db *gorm.DB
 }
 
-// 确保 datastore 实现了 store.IStore 接口.
-var _ store.IStore = (*datastore)(nil)
+// 确保 Datastore 实现了 store.IStore 接口.
+var _ store.IStore = (*Datastore)(nil)
 
 // NewStore 创建一个 store.IStore 类型的实例.
-func NewStore(db *gorm.DB) *datastore {
+func NewStore(db *gorm.DB) *Datastore {
 	// 确保 s 只被初始化一次
 	once.Do(func() {
-		s = &datastore{db}
+		s = &Datastore{db}
 	})
 
 	return s
 }
 
-func (ds *datastore) Templates() store.TemplateStore {
+func (ds *Datastore) Templates() store.TemplateStore {
 	return newTemplates(ds.db)
 }
 
-func (ds *datastore) Configurations() store.ConfigurationStore {
+func (ds *Datastore) Configurations() store.ConfigurationStore {
 	return newConfigurations(ds.db)
 }
+
+// todo history

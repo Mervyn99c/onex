@@ -4,24 +4,22 @@
 // this file is https://github.com/Rosas99/smsx.
 //
 
-package mq
+package pump
 
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"github.com/segmentio/kafka-go"
-
-	"github.com/Rosas99/smsx/pkg/log"
-	genericoptions "github.com/Rosas99/smsx/pkg/options"
+	"github.com/Rosas99/smsx/internal/sms/model"
+	"github.com/Rosas99/smsx/internal/sms/store"
 )
 
 // kafkaLogger is a log.Logger implementation that writes log messages to Kafka.
-type KafkaLogger struct {
+type Logger struct {
 	// enabled is an atomic boolean indicating whether the logger is enabled.
 	enabled int32
 	// writer is the Kafka writer used to write log messages.
-	writer *kafka.Writer
+
+	ds store.TemplateStore
 }
 
 // todo 这里改成短信发送历史
@@ -35,17 +33,13 @@ type AuditMessage struct {
 }
 
 // NewLogger creates a new kafkaLogger instance.
-func NewLogger(kafkaOpts *genericoptions.KafkaOptions) (*KafkaLogger, error) {
-	writer, err := kafkaOpts.Writer()
-	if err != nil {
-		return nil, err
-	}
+func NewLogger(ds store.TemplateStore) (*Logger, error) {
 
-	return &KafkaLogger{writer: writer}, nil
+	return &Logger{ds: ds}, nil
 }
 
 // LogModel writes a log message for the policy model.
-func (l *KafkaLogger) LogHistory(test string) string {
+func (l *Logger) LogHistory(test string) string {
 
 	//message := AuditMessage{
 	//	Timestamp: time.Now().Unix(),
@@ -55,13 +49,18 @@ func (l *KafkaLogger) LogHistory(test string) string {
 	out, _ := json.Marshal(test)
 	// 因为writer传的都是二进制
 	// 这里json转成二进制数组
-	fmt.Println(test)
-	if err := l.writer.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
-		log.Errorw(err, "Failed to write kafka messages")
-	} else {
-		fmt.Println(string(out))
-	}
-	return string(out)
-}
+	//fmt.Println(test)
+	//if err := l.writer.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
+	//	log.Errorw(err, "Failed to write kafka messages")
+	//} else {
+	//	fmt.Println(string(out))
+	//}
 
-// log others
+	err := l.ds.Create(context.Background(), &model.TemplateM{})
+	if err != nil {
+
+	}
+
+	return string(out)
+	// todo 修改成MySQL
+}
