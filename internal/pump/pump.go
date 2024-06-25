@@ -9,7 +9,7 @@ package pump
 
 import (
 	"github.com/Rosas99/smsx/internal/pkg/idempotent"
-	flow2 "github.com/Rosas99/smsx/internal/pump/mq"
+	"github.com/Rosas99/smsx/internal/pump/consumer"
 	"github.com/Rosas99/smsx/internal/pump/provider"
 	"github.com/Rosas99/smsx/internal/pump/types"
 	"github.com/Rosas99/smsx/internal/sms/store"
@@ -154,7 +154,7 @@ func (s PreparedServer) Run(stopCh <-chan struct{}) error {
 	}
 
 	// todo 这里可以传入整个server，也可以只传入redis store等
-	logic := flow2.NewHandlerMessageBiz(ctx, s.db, s.idt, s.logger)
+	logic := consumer.NewHandlerMessageBiz(ctx, s.db, s.idt, s.logger)
 	articleConsumer := flow.NewConsumer(logic, 1)
 	// 这里通过map写入通道，通道是由sink初始化后开始消费
 	source2.Via(articleConsumer)
