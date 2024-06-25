@@ -7,6 +7,7 @@
 package client
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -51,4 +52,20 @@ func NewRequest(url string) *resty.Request {
 // IsDiscoveryEndpoint used to determine if the given endpoint is a service discovery endpoint.
 func IsDiscoveryEndpoint(server string) bool {
 	return strings.HasPrefix(server, "discovery:///")
+}
+
+type AuthSuccess struct {
+}
+
+func main() {
+	url := "http://example.com/api"
+	request := NewRequest(url)
+	response, err := request.
+		SetBody([]byte(`{"username":"testuser", "password":"testpass"}`)).
+		SetResult(&AuthSuccess{}).
+		Post(url)
+	if err != nil {
+
+	}
+	fmt.Print(response)
 }
