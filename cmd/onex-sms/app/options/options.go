@@ -1,21 +1,21 @@
 // Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/superproj/onex.
+// this file is https://github.com/Rosas99/smsx.
 //
 
 // Package options contains flags and options for initializing an apiserver
 package options
 
 import (
-	"github.com/superproj/onex/internal/sms"
+	"github.com/Rosas99/smsx/internal/sms"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	cliflag "k8s.io/component-base/cli/flag"
 
-	"github.com/superproj/onex/internal/pkg/feature"
-	"github.com/superproj/onex/pkg/app"
-	"github.com/superproj/onex/pkg/log"
-	genericoptions "github.com/superproj/onex/pkg/options"
+	"github.com/Rosas99/smsx/internal/pkg/feature"
+	"github.com/Rosas99/smsx/pkg/app"
+	"github.com/Rosas99/smsx/pkg/log"
+	genericoptions "github.com/Rosas99/smsx/pkg/options"
 )
 
 const (

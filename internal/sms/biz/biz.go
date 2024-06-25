@@ -1,20 +1,20 @@
 // Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/superproj/onex.
+// this file is https://github.com/Rosas99/smsx.
 //
 
 package biz
 
-//go:generate mockgen -destination mock_biz.go -package biz github.com/superproj/onex/internal/fakeserver/biz IBiz
+//go:generate mockgen -destination mock_biz.go -package biz github.com/Rosas99/smsx/internal/fakeserver/biz IBiz
 
 import (
+	"github.com/Rosas99/smsx/internal/pkg/idempotent"
+	"github.com/Rosas99/smsx/internal/sms/biz/message"
+	"github.com/Rosas99/smsx/internal/sms/biz/template"
+	"github.com/Rosas99/smsx/internal/sms/mq"
+	"github.com/Rosas99/smsx/internal/sms/store"
 	"github.com/redis/go-redis/v9"
-	"github.com/superproj/onex/internal/pkg/idempotent"
-	"github.com/superproj/onex/internal/sms/biz/message"
-	"github.com/superproj/onex/internal/sms/biz/template"
-	"github.com/superproj/onex/internal/sms/mq"
-	"github.com/superproj/onex/internal/sms/store"
 )
 
 // IBiz 定义了 Biz 层需要实现的方法.

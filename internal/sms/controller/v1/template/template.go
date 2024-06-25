@@ -1,6 +1,6 @@
 package template
 
-import "github.com/superproj/onex/internal/sms/service"
+import "github.com/Rosas99/smsx/internal/sms/service"
 
 type TemplateController struct {
 	svc *service.SmsServerService

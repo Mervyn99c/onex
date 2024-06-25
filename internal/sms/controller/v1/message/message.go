@@ -1,6 +1,6 @@
 package message
 
-import "github.com/superproj/onex/internal/sms/service"
+import "github.com/Rosas99/smsx/internal/sms/service"
 
 type MessageController struct {
 	svc *service.SmsServerService

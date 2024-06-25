@@ -1,7 +1,7 @@
 // Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/superproj/onex.
+// this file is https://github.com/Rosas99/smsx.
 //
 
 package mq
@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"github.com/segmentio/kafka-go"
 
-	"github.com/superproj/onex/pkg/log"
-	genericoptions "github.com/superproj/onex/pkg/options"
+	"github.com/Rosas99/smsx/pkg/log"
+	genericoptions "github.com/Rosas99/smsx/pkg/options"
 )
 
 // kafkaLogger is a log.Logger implementation that writes log messages to Kafka.

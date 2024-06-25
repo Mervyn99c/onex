@@ -1,9 +1,9 @@
 package template
 
 import (
+	"github.com/Rosas99/smsx/internal/pkg/core"
+	v1 "github.com/Rosas99/smsx/pkg/api/sms/v1"
 	"github.com/gin-gonic/gin"
-	"github.com/superproj/onex/internal/pkg/core"
-	v1 "github.com/superproj/onex/pkg/api/sms/v1"
 )
 
 func (b *TemplateController) List(c *gin.Context) {

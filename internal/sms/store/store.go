@@ -1,19 +1,19 @@
 // Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/superproj/onex.
+// this file is https://github.com/Rosas99/smsx.
 //
 
 package store
 
-//go:generate mockgen -destination mock_store.go -package store github.com/superproj/onex/internal/fakeserver/store IStore,OrderStore
+//go:generate mockgen -destination mock_store.go -package store github.com/Rosas99/smsx/internal/fakeserver/store IStore,OrderStore
 
 import (
 	"context"
 	"sync"
 
-	"github.com/superproj/onex/internal/pkg/meta"
-	"github.com/superproj/onex/internal/sms/model"
+	"github.com/Rosas99/smsx/internal/pkg/meta"
+	"github.com/Rosas99/smsx/internal/sms/model"
 )
 
 // IStore 定义了 Store 层需要实现的方法.

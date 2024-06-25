@@ -1,19 +1,19 @@
 // Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/superproj/onex.
+// this file is https://github.com/Rosas99/smsx.
 //
 
 package sms
 
 import (
+	"github.com/Rosas99/smsx/internal/pkg/core"
+	"github.com/Rosas99/smsx/internal/sms/controller/v1/message"
+	"github.com/Rosas99/smsx/internal/sms/controller/v1/template"
+	"github.com/Rosas99/smsx/internal/sms/service"
+	v1api "github.com/Rosas99/smsx/pkg/api/sms/v1"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-	"github.com/superproj/onex/internal/pkg/core"
-	"github.com/superproj/onex/internal/sms/controller/v1/message"
-	"github.com/superproj/onex/internal/sms/controller/v1/template"
-	"github.com/superproj/onex/internal/sms/service"
-	v1api "github.com/superproj/onex/pkg/api/sms/v1"
 )
 
 func installRouters(g *gin.Engine, svc *service.SmsServerService, accounts map[string]string) {

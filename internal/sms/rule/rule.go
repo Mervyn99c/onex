@@ -3,7 +3,7 @@ package rule
 import (
 	"errors"
 	"fmt"
-	"github.com/superproj/onex/internal/sms/model"
+	"github.com/Rosas99/smsx/internal/sms/model"
 )
 
 // CheckerRequest 模拟验证请求

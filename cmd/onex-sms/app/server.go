@@ -1,7 +1,7 @@
 // Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/superproj/onex.
+// this file is https://github.com/Rosas99/smsx.
 //
 
 package app
@@ -9,16 +9,16 @@ package app
 import (
 	genericapiserver "k8s.io/apiserver/pkg/server"
 
-	"github.com/superproj/onex/cmd/onex-sms/app/options"
-	"github.com/superproj/onex/internal/sms"
-	"github.com/superproj/onex/pkg/app"
+	"github.com/Rosas99/smsx/cmd/onex-sms/app/options"
+	"github.com/Rosas99/smsx/internal/sms"
+	"github.com/Rosas99/smsx/pkg/app"
 )
 
 const commandDesc = `The sms server is a standard, specification-compliant demo 
 example of the onex service.
 
 Find more onex-sms information at:
-    https://github.com/superproj/onex/blob/master/docs/guide/en-US/cmd/onex-sms.md`
+    https://github.com/Rosas99/smsx/blob/master/docs/guide/en-US/cmd/onex-sms.md`
 
 // NewApp creates an App object with default parameters.
 func NewApp(name string) *app.App {

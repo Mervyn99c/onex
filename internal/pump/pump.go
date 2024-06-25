@@ -1,15 +1,15 @@
 // Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/superproj/onex.
+// this file is https://github.com/Rosas99/smsx.
 //
 
 //go:generate wire .
 package pump
 
 import (
-	flow2 "github.com/superproj/onex/internal/pump/mq/consumer"
-	"github.com/superproj/onex/pkg/streams/flow"
+	flow2 "github.com/Rosas99/smsx/internal/pump/mq/consumer"
+	"github.com/Rosas99/smsx/pkg/streams/flow"
 	"time"
 
 	"github.com/segmentio/kafka-go"
@@ -17,9 +17,9 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/superproj/onex/pkg/log"
-	genericoptions "github.com/superproj/onex/pkg/options"
-	kafkaconnector "github.com/superproj/onex/pkg/streams/connector/kafka"
+	"github.com/Rosas99/smsx/pkg/log"
+	genericoptions "github.com/Rosas99/smsx/pkg/options"
+	kafkaconnector "github.com/Rosas99/smsx/pkg/streams/connector/kafka"
 )
 
 // Config defines the config for the apiserver.

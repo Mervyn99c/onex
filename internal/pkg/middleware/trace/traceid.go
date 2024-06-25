@@ -1,16 +1,16 @@
 // Copyright 2024 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/superproj/onex.
+// this file is https://github.com/Rosas99/smsx.
 //
 
 package trace
 
 import (
+	known "github.com/Rosas99/smsx/internal/pkg/known/toyblc"
+	"github.com/Rosas99/smsx/pkg/log"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	known "github.com/superproj/onex/internal/pkg/known/toyblc"
-	"github.com/superproj/onex/pkg/log"
 )
 
 // TraceID 是一个 Gin 中间件，用来在每一个 HTTP 请求的 context, response 中注入 `Trace-ID` 键值对.

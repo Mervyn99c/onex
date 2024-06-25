@@ -1,7 +1,7 @@
 // Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/superproj/onex.
+// this file is https://github.com/Rosas99/smsx.
 //
 
 package sms
@@ -11,12 +11,15 @@ import (
 	"crypto/tls"
 	"errors"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/reflection"
 	"net"
 	"net/http"
 	"time"
 
-	"github.com/superproj/onex/pkg/log"
-	genericoptions "github.com/superproj/onex/pkg/options"
+	pb "github.com/Rosas99/smsx/pkg/api/sms/v1"
+	"github.com/Rosas99/smsx/pkg/log"
+	genericoptions "github.com/Rosas99/smsx/pkg/options"
 	"google.golang.org/grpc"
 )
 
@@ -71,6 +74,29 @@ func (s *HTTPServer) GracefulStop() {
 	if err := s.srv.Shutdown(ctx); err != nil {
 		log.Errorw(err, "Failed to gracefully shutdown http(s) server")
 	}
+}
+
+// todo 定义smsserver 重新生成
+func NewGRPCServer(
+	grpcOptions *genericoptions.GRPCOptions,
+	tlsOptions *genericoptions.TLSOptions,
+	srv pb.SmsServerServer,
+) (*GRPCServer, error) {
+	dialOptions := []grpc.ServerOption{}
+	if tlsOptions != nil && tlsOptions.UseTLS {
+		tlsConfig, err := tlsOptions.TLSConfig()
+		if err != nil {
+			return nil, err
+		}
+
+		dialOptions = append(dialOptions, grpc.Creds(credentials.NewTLS(tlsConfig)))
+	}
+
+	grpcsrv := grpc.NewServer(dialOptions...)
+	pb.RegisterSmsServerServer(grpcsrv, srv)
+	reflection.Register(grpcsrv)
+
+	return &GRPCServer{srv: grpcsrv, opts: grpcOptions}, nil
 }
 
 func (s *GRPCServer) RunOrDie() {
