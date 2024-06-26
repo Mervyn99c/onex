@@ -27,7 +27,7 @@ type Logger struct {
 	// writer is the Kafka writer used to write log messages.
 
 	writer *kafka.Writer
-	ds     store.TemplateStore
+	ds     store.HistoryStore
 }
 
 // todo 这里改成短信发送历史
@@ -41,7 +41,7 @@ type AuditMessage struct {
 }
 
 // NewLogger creates a new kafkaLogger instance.
-func NewLogger(kafkaOpts *genericoptions.KafkaOptions, ds store.TemplateStore) (*Logger, error) {
+func NewLogger(kafkaOpts *genericoptions.KafkaOptions, ds store.HistoryStore) (*Logger, error) {
 	writer, err := kafkaOpts.Writer()
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (l *Logger) LogHistory(test string) string {
 	//	fmt.Println(string(out))
 	//}
 
-	err := l.ds.Create(context.Background(), &model.TemplateM{})
+	err := l.ds.Create(context.Background(), &model.HistoryM{})
 	if err != nil {
 
 	}

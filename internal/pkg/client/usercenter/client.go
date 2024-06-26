@@ -34,11 +34,6 @@ type impl struct {
 	client v1.FakeServerClient
 }
 
-func (i *impl) Authenticate(ctx context.Context, token string) (userID string, err error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 type Impl = impl
 
 var (
@@ -68,13 +63,12 @@ func GetClient() *impl {
 	return cli
 }
 
-// Auth implements the Interface interface.
-func (i *impl) Auth(ctx context.Context, token string, obj, act string) (userID string, allowed bool, err error) {
+func (i *impl) Authenticate(ctx context.Context, token string) (userID string, err error) {
 	rq := &v1.DeleteOrderRequest{}
 	resp, err := i.client.DeleteOrder(ctx, rq)
 	if err != nil {
-		return "", false, err
+		return "", err
 	}
 
-	return resp.String(), true, nil
+	return resp.String(), nil
 }

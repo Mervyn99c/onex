@@ -46,4 +46,8 @@ func (ds *Datastore) Configurations() store.ConfigurationStore {
 	return newConfigurations(ds.db)
 }
 
+func (ds *Datastore) Histories() store.HistoryStore {
+	return newHistories(ds.db)
+}
+
 // todo history
