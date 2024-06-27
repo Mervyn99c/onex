@@ -9,8 +9,8 @@ package sms
 import (
 	"github.com/Rosas99/smsx/internal/pkg/client/usercenter"
 	"github.com/Rosas99/smsx/internal/pkg/idempotent"
+	"github.com/Rosas99/smsx/internal/pkg/middleware/gintrace"
 	"github.com/Rosas99/smsx/internal/pkg/middleware/header"
-	"github.com/Rosas99/smsx/internal/pkg/middleware/trace"
 	"github.com/Rosas99/smsx/internal/sms/biz"
 	"github.com/Rosas99/smsx/internal/sms/middleware/auth"
 	"github.com/Rosas99/smsx/internal/sms/middleware/validate"
@@ -80,7 +80,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	writer, err := NewLogger(c.KafkaOptions1, ds.Templates())
+	writer, err := NewLogger(c.KafkaOptions1, ds)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	mws := []gin.HandlerFunc{gin.Recovery(), header.NoCache, header.Cors, header.Secure,
 		// todo 这里传入rds ds
 		// 注意验证链路的顺序
-		trace.TraceID(), auth.BasicAuth(impl), validate.Validation(ds)}
+		gintrace.TraceID(), auth.BasicAuth(impl), validate.Validation(ds)}
 	// 添加中间件
 	g.Use(mws...)
 	// Need start grpc server first. http server depends on grpc sever.

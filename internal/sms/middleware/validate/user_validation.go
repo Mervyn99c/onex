@@ -44,14 +44,11 @@ func Validation(ds store.IStore) gin.HandlerFunc {
 			var r v1.CreateTemplateRequest
 			if err := c.ShouldBindJSON(&r); err != nil {
 				core.WriteResponse(c, err, nil)
-				// todo 了解gin如何返回错误 如：
-				/*
-					c.JSON(http.StatusBadRequest, gin.H{
-							"err": err.Error(),
-						})
-				*/
+				c.Abort()
+				return
 			}
-
+		case "/v1/users/:name2":
+			// 校验短信验证码是否6位
 		default:
 		}
 

@@ -11,10 +11,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/google/wire"
+	//"github.com/google/wire"
 	"k8s.io/klog/v2"
-
-	"github.com/Rosas99/smsx/internal/pkg/middleware/validate"
+	//"github.com/Rosas99/smsx/internal/pkg/middleware/validate"
 )
 
 // validator implement the validate.IValidator interface.
@@ -23,7 +22,7 @@ type validator struct {
 }
 
 // ProviderSet is validator providers.
-var ProviderSet = wire.NewSet(New, wire.Bind(new(validate.IValidator), new(*validator)))
+//var ProviderSet = wire.NewSet(New, wire.Bind(new(validate.IValidator), new(*validator)))
 
 // New create and initialize the custom validator.
 func New(cv any) *validator {

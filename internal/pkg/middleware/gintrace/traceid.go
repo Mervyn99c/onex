@@ -4,7 +4,7 @@
 // this file is https://github.com/Rosas99/smsx.
 //
 
-package trace
+package gintrace
 
 import (
 	known "github.com/Rosas99/smsx/internal/pkg/known/toyblc"
